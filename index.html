@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПсихоТест - Психологиялық тестілер</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Тіркелу терезесі -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Кіру</button>
+                <button class="auth-tab" onclick="switchAuthTab('register')">Тіркелу</button>
+            </div>
+            <div id="loginForm" class="auth-form active">
+                <h3><i class="fas fa-sign-in-alt"></i> Профильге кіру</h3>
+                <input type="email" id="loginEmail" placeholder="📧 Email">
+                <input type="password" id="loginPassword" placeholder="🔒 Құпиясөз">
+                <button class="auth-btn" onclick="loginUser()">Кіру</button>
+                <div class="demo-link">
+                    <a href="#" onclick="demoLogin()">👤 Қонақ ретінде кіру</a>
+                </div>
+            </div>
+            <div id="registerForm" class="auth-form">
+                <h3><i class="fas fa-user-plus"></i> Аккаунт құру</h3>
+                <input type="text" id="regName" placeholder="👤 Аты-жөніңіз">
+                <input type="email" id="regEmail" placeholder="📧 Email">
+                <input type="password" id="regPassword" placeholder="🔒 Құпиясөз">
+                <button class="auth-btn" onclick="registerUser()">Тіркелу</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <h2>ПсихоТест</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link active"><i class="fas fa-home"></i> Басты</a></li>
+                    <li><a href="#tests" class="nav-link"><i class="fas fa-clipboard-list"></i> Тесттер</a></li>
+                    <li><a href="#results" class="nav-link"><i class="fas fa-chart-bar"></i> Нәтижелер</a></li>
+                    <li><a href="#profile" class="nav-link"><i class="fas fa-user"></i> Профиль</a></li>
+                    <li id="authNav" class="auth-nav"><a href="#" class="nav-link" onclick="toggleAuthModal()"><i
+                                class="fas fa-sign-in-alt"></i> Кіру</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Басты бет -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>🧠 Өзіңді таны</h1>
+                    <p class="hero-subtitle">Дәл және кәсіби психологиялық тестілер</p>
+                    <div class="hero-buttons">
+                        <button class="cta-btn primary" onclick="showSection('tests')">
+                            <i class="fas fa-play"></i> Тестілеуді бастау
+                        </button>
+                        <button class="cta-btn secondary" onclick="toggleAuthModal()">
+                            <i class="fas fa-user-plus"></i> Профиль құру
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">12k+</div>
+                        <div class="stat-label">өткізілген тест</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">28</div>
+                        <div class="stat-label">тест түрі</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">97%</div>
+                        <div class="stat-label">қанағаттанған</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Тесттер -->
+        <section id="tests" class="section">
+            <div class="container">
+                <h2><i class="fas fa-clipboard-list"></i> Тест таңдаңыз</h2>
+                <div class="tests-grid" id="testsGrid"></div>
+            </div>
+        </section>
+
+        <!-- Тест терезесі -->
+        <section id="test-window" class="section modal-section">
+            <div class="test-container">
+                <div class="test-header">
+                    <div class="test-info">
+                        <h3 id="testTitle">Тест</h3>
+                        <div class="test-progress">
+                            <span id="questionCounter">1 / 5</span>
+                        </div>
+                    </div>
+                    <button class="close-test" onclick="closeTest()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar"></div>
+                    </div>
+                </div>
+                <div class="question-container" id="questionContainer"></div>
+                <div class="test-controls">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-arrow-left"></i> Алдыңғы
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+                        Келесі <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Нәтижелер -->
+        <section id="results" class="section">
+            <div class="container">
+                <h2><i class="fas fa-chart-bar"></i> Сіздің нәтижелеріңіз</h2>
+                <div class="results-list" id="resultsList"></div>
+            </div>
+        </section>
+
+        <!-- Профиль -->
+        <section id="profile" class="section">
+            <div class="container">
+                <h2><i class="fas fa-user"></i> Сіздің профильіңіз</h2>
+                <div class="profile-section">
+                    <div class="profile-card">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 id="userName">Қонақ</h3>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span id="userTests">0</span> тест
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-award"></i>
+                                <span id="userAvgScore">0%</span> орташа нәтиже
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="toggleEditProfile()">
+                            <i class="fas fa-edit"></i> Өңдеу
+                        </button>
+                    </div>
+                    <div class="profile-form-container" id="profileForm" style="display: none;">
+                        <h4>Профиль параметрлері</h4>
+                        <input type="text" id="editName" placeholder="Сіздің атыңыз">
+                        <div class="form-actions">
+                            <button class="btn btn-secondary" onclick="toggleEditProfile()">Бас тарту</button>
+                            <button class="btn btn-primary" onclick="saveProfile()">Сақтау</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <style>
+        /* ✅ ҚАУІПСІЗ СТИЛЬДЕР - ФУТЕР ҮШІН */
+        .footer {
+            background-color: #ffffff !important;
+            padding: 60px 0 30px !important;
+            border-top: 1px solid #e2e8f0 !important;
+            color: #4a5568 !important;
+            width: 100% !important;
+            display: block !important;
+            /* Убедимся, что футер виден */
+        }
+
+        .footer .footer-content {
+            display: flex !important;
+            flex-direction: row !important;
+            /* Горизонтально */
+            flex-wrap: wrap !important;
+            justify-content: space-between !important;
+            gap: 30px !important;
+            margin-bottom: 40px !important;
+        }
+
+        .footer-brand,
+        .footer-contact,
+        .footer-author {
+            flex: 1 !important;
+            min-width: 250px !important;
+            text-align: left !important;
+        }
+
+        .footer-brand h3 {
+            color: #667eea !important;
+            font-size: 1.5rem !important;
+            margin-bottom: 1rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+
+        .footer h4 {
+            color: #1a202c !important;
+            margin-bottom: 1.2rem !important;
+            font-weight: 600 !important;
+        }
+
+        .footer p {
+            margin-bottom: 0.8rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            font-size: 0.95rem !important;
+        }
+
+        .social-links {
+            display: flex !important;
+            gap: 15px !important;
+            margin-top: 15px !important;
+        }
+
+        .social-link {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            background: #f1f5f9 !important;
+            color: #667eea !important;
+            border-radius: 50% !important;
+            text-decoration: none !important;
+        }
+
+        .footer-bottom {
+            text-align: center !important;
+            padding-top: 20px !important;
+            border-top: 1px solid #f1f5f9 !important;
+            width: 100% !important;
+        }
+
+        /* Мобильді телефондар үшін */
+        @media (max-width: 768px) {
+            .footer .footer-content {
+                flex-direction: column !important;
+                text-align: center !important;
+            }
+
+            .footer p {
+                justify-content: center !important;
+            }
+
+            .social-links {
+                justify-content: center !important;
+            }
+        }
+    </style>
+
+    <!-- ✅ ЖАҢА FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-brain"></i> ПсихоТест</h3>
+                    <p>Психологиялық тестілер платформасы</p>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>📍 Ақтөбе қаласы</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Ватутина-1_кабинет-14 </p>
+                    <p><i class="fas fa-phone"></i> <a href="tel:+87761159052">+7 776 115 90 52</a></p>
+                    <p><i class="fas fa-envelope"></i> <a
+                            href="mailto:ayanakairatkyzyy@gmail.com">ayanakairatkyzyy@gmail.com</a></p>
+                </div>
+
+                <div class="footer-author">
+                    <h4>👩‍💻 Автор</h4>
+                    <p><strong>Kuanysh Ayana</strong></p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 ПсихоТест. </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
